@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.jump=False
         #movement
         self.speed =200
-        self.gravity =0
+        self.gravity =1300
         self.direction=vector(1,0)
         #collision
         self.collision_sprites=collision_sprites
@@ -28,17 +28,14 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             input_vector.x-=1
             
-        if keys[pygame.K_UP]:
-            input_vector.y-=1
+        #if keys[pygame.K_UP]:
+            #input_vector.y-=1
             
-        if keys[pygame.K_DOWN]:
-            input_vector.y+=1
-            
-        if keys[pygame.K_SPACE]:
-            self.jump = True 
+        #if keys[pygame.K_DOWN]:
+            #input_vector.y+=1
                
         self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
-        self.direction.y = input_vector.normalize().y if input_vector else input_vector.y
+        #self.direction.y = input_vector.normalize().y if input_vector else input_vector.y
 
     def move(self,dt):
         #horizontal
@@ -46,10 +43,11 @@ class Player(pygame.sprite.Sprite):
         self.collision('horizontal')
         
         #vertical
-        #self.direction.y += self.gravity /2*dt
-        #self.rect.y += self.direction.y *dt
-        #self.direction.y += self.gravity /2*dt
-        self.rect.y += self.direction.y * self.speed*dt
+        self.direction.y += self.gravity /2*dt
+        self.rect.y += self.direction.y *dt
+        self.direction.y += self.gravity /2*dt
+        #God mode 
+        #self.rect.y += self.direction.y * self.speed*dt
         self.collision('vertical')
     
     def collision(self,axis):

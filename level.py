@@ -24,14 +24,14 @@ class Level:
             if obj.name == 'helicopter':
                 if obj.width > obj.height: #horizontal
                     move_dir = 'x'
-                    star_pos =(obj.x,obj.y+obj.height/2)
+                    start_pos =(obj.x,obj.y+obj.height/2)
                     end_pos =(obj.x+obj.width,obj.y+obj.height/2)
                 else: #vertical
                     move_dir ='y'
                     start_pos =(obj.x+obj.width/2,obj.y)
                     end_pos =(obj.x+obj.width/2,obj.y+obj.height)
                 speed = obj.properties['speed']
-                MovingSprite(self.all_sprites,start_pos,end_pos,move_dir,speed)
+                MovingSprite((self.all_sprites,self.collision_sprites),start_pos,end_pos,move_dir,speed)
                     
     def run(self,dt):
         self.all_sprites.update(dt)
