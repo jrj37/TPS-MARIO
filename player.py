@@ -6,25 +6,33 @@ FPS=10
 w,h =48,56
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,pos,groups,collision_sprites, semi_collision_sprites):
+    def __init__(self,pos,groups,collision_sprites, semi_collision_sprites, frames):
+        # general
         super().__init__(groups)
-        self.image=pygame.image.load(join('.', 'graphics', 'player', 'idle', '0.png'))
         self.z = Z_LAYERS['main']
+        self.origin_pos = pos
+
+        # images
+        self.frames, self.frame_index = frames, 0
+        self.state, self.facing_right = 'idle', True
+        self.image = self.frames[self.state][self.frame_index]
 
         # rects
         self.rect= self.image.get_frect(topleft=pos)
         self.hitbox_rect = self.rect.inflate(-76, -36)
+        self.hitbox_rect.bottom = self.rect.bottom
         self.old_rect=self.hitbox_rect.copy()
 
         #movement
         self.speed =200
         self.gravity =1300
         self.direction=vector(1,0)
+        self.attacking = False
 
         #jump
         self.jump = False
-        self.jump_height = 900
-        self.gravity =1300
+        self.jump_height = 650
+        self.gravity = 1300
         self.direction=vector(1,0)
 
         #collision
@@ -38,6 +46,7 @@ class Player(pygame.sprite.Sprite):
             'wall jump' : Timer(600),
             'wall slide block' : Timer(250),
             'platform skip' : Timer(100),
+            'attack block' : Timer(700),
         }
 
     def input(self):
@@ -45,20 +54,41 @@ class Player(pygame.sprite.Sprite):
         input_vector=vector(0,0)
 
         if not self.timers['wall jump'].active:
+
             if keys[pygame.K_RIGHT]:
                 input_vector.x+=1
+                self.facing_right = True
                 
             if keys[pygame.K_LEFT]:
                 input_vector.x-=1
-                #self.image=pygame.transform.flip(self.image,True,False)                
+                self.facing_right = False
 
-            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
-            
             if keys[pygame.K_DOWN]:
                 self.timers['platform skip'].activate()
 
+            if keys[pygame.K_x]:
+                self.attack()
+                self.frame_index = 0
+
+            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+            
+
         if keys[pygame.K_SPACE]:
             self.jump = True 
+
+    def kill(self):
+        if self.rect.top > 2 * WINDOW_HEIGHT:
+            self.rect.topleft = self.origin_pos
+            self.hitbox_rect = self.rect.inflate(-76, -36)
+            self.direction = vector(0,0)
+            self.state = 'idle'
+            self.attacking = False
+
+    def attack(self):
+        if not self.timers['attack block'].active: 
+            self.attacking = True
+            self.frame_index = 0
+            self.timers['attack block'].activate()
 
     def move(self,dt):
         #horizontal
@@ -83,7 +113,7 @@ class Player(pygame.sprite.Sprite):
 
             elif any ((self.on_surface['left'],self.on_surface['right'])) and not self.timers['wall slide block'].active:
                 self.timers['wall jump'].activate()
-                self.direction.y = -self.jump_height / 1.5
+                self.direction.y = -self.jump_height / 1.25
                 self.direction.x = 1 if self.on_surface['left'] else -1
 
             self.jump = False
@@ -151,11 +181,45 @@ class Player(pygame.sprite.Sprite):
     def update_timers(self):
         for timer in self.timers.values():
             timer.update()
-       
+    
+    def animate(self, dt):
+        self.frame_index += ANIMATION_SPEED * dt
+
+        if self.state == 'attack' and self.frame_index >= len(self.frames[self.state]): #Only one attack frame
+            self.state = 'idle'
+
+        self.image = self.frames[self.state][int(self.frame_index % len(self.frames[self.state]))]
+        self.image = self.image if self.facing_right else pygame.transform.flip(self.image, True, False)
+
+        if self.attacking and self.frame_index > len(self.frames[self.state]):
+            self.attacking = False
+
+    def get_state(self):
+        if self.on_surface['floor']:
+            if self.attacking:
+                self.state = 'attack'
+            else:
+                self.state = 'idle' if self.direction.x == 0 else 'run'
+        
+        else:
+            if self.attacking:
+                self.state = 'air_attack'
+            else:
+                if any((self.on_surface['left'], self.on_surface['right'])):
+                    self.state = 'wall'
+                else:
+                    self.state = 'jump' if self.direction.y < 0 else 'fall'
+
     def update(self,dt):
         self.old_rect=self.hitbox_rect.copy()
         self.update_timers()
+
         self.input()
         self.move(dt)
         self.platform_move(dt)
         self.check_contact()
+
+        self.get_state()
+        self.animate(dt)
+
+        self.kill()

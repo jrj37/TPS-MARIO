@@ -9,7 +9,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.display_surface=pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
-        pygame.display.set_caption('SUPER TPS WORLD')
+        pygame.display.set_caption('SUPER PREGA BROS')
         self.clock =pygame.time.Clock()
         self.import_assets()
         
@@ -21,8 +21,13 @@ class Game:
             'flag': import_folder('.', 'graphics', 'level', 'flag'),
             'saw': import_folder('.', 'graphics', 'enemies', 'saw', 'animation'),
             'floor_spike' : import_folder('.', 'graphics', 'enemies', 'floor_spikes'),
+            'palms' : import_folder('.', 'graphics', 'level', 'palms'),
+            'candle' : import_folder('.', 'graphics', 'level', 'candle'),
+            'window' : import_folder('.', 'graphics', 'level', 'window'),
+            'big_chain' : import_folder('.', 'graphics', 'level', 'big chains'),
+            'small_chain' : import_folder('.', 'graphics', 'level', 'small chains'),
+            'player' : import_sub_folders('.', 'graphics', 'player'),
         }
-        
         
     def run(self):
         while True:

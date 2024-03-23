@@ -2,6 +2,7 @@ from settings import *
 from level import *
 from pytmx.util_pygame import load_pygame
 from os.path import join
+from support import *
 
 class Game:
     def __init__(self):
@@ -15,6 +16,18 @@ class Game:
         
         self.current_stage=Level(self.tmx_maps[0])
         
+    def import_assets(self):
+        self.level_frames = {
+            'flag': import_folder('.', 'graphics', 'level', 'flag'),
+            'saw': import_folder('.', 'graphics', 'enemies', 'saw', 'animation'),
+            'floor_spike' : import_folder('.', 'graphics', 'enemies', 'floor_spikes'),
+            'palms' : import_folder('.', 'graphics', 'level', 'palms'),
+            'candles' : import_folder('.', 'graphics', 'level', 'candle'),
+            'window' : import_folder('.', 'graphics', 'level', 'window'),
+            'big chain' : import_folder('.', 'graphics', 'level', 'big chains'),
+            'small chain' : import_folder('.', 'graphics', 'level', 'small chains'),
+            'player' : import_folder('.', 'graphics', 'player'),
+        }
         
     def run(self):
         while True:
