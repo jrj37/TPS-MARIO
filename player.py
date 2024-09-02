@@ -92,7 +92,7 @@ class Player(pygame.sprite.Sprite):
 
     def move(self,dt):
         #horizontal
-        self.hitbox_rect.x += self.direction.x * self.speed * dt
+        self.hitbox_rect.x += self.direction.x * self.speed * dt 
         self.collision('horizontal')
         
         #vertical
