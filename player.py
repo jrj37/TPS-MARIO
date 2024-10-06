@@ -224,4 +224,4 @@ class Player(pygame.sprite.Sprite):
         self.get_state()
         self.animate(dt)
 
-        self.kill()
+        #self.kill()

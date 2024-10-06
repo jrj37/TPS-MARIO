@@ -9,6 +9,9 @@ class Level:
     def __init__(self,tmx_map, level_frames):
         self.display_surface=pygame.display.get_surface()
         
+        #data 
+        self.level_width = tmx_map.width * TILE_SIZE
+        self.level_bottom = tmx_map.height * TILE_SIZE
         #groups
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
@@ -47,6 +50,8 @@ class Level:
                    semi_collision_sprites = self.semi_collision_sprites,
                    frames = level_frames['player'])
             else:
+                #if obj.name == 'flag':
+                    #self.level_finish.rect=pygame.FRect((obj.x,obj.y),(obj.width,obj.height))
                 if obj.name in ('barrel', 'crate'):
                     Sprite(((obj.x, obj.y)), obj.image, (self.all_sprites, self.collision_sprites))
                 else:
@@ -74,7 +79,22 @@ class Level:
                 Tooth((obj.x,obj.y),level_frames['tooth'],(self.all_sprites,self.damage_sprites,self.tooth_sprites),self.collision_sprites)
             if obj.name =='shell':
                 Shell(pos=(obj.x,obj.y),frames=level_frames['shell'],groups=(self.all_sprites,self.collision_sprites),reverse=obj.properties['reverse'],player=self.player,create_pearl=self.create_pearl)
-                
+     
+        #water
+        for obj in tmx_map.get_layer_by_name('Water'):
+            rows = int (obj.height / TILE_SIZE)
+            cols = int(obj.width / TILE_SIZE)
+            
+            for row in range(rows):
+                for col in range(cols):
+                    x = obj.x + col * TILE_SIZE
+                    y = obj.y + row * TILE_SIZE
+                    
+                    if row==0:
+                        AnimatedSprite((x,y),level_frames['water_top'],self.all_sprites,Z_LAYERS['water'])
+                    else:
+                        Sprite((x,y),level_frames['water_body'],self.all_sprites,Z_LAYERS['water'])
+                       
     def create_pearl(self,pos,direction): 
         Pearl(pos,(self.all_sprites,self.damage_sprites,self.pearl_sprites),self.pearl_surf,direction,150)                
     
@@ -89,6 +109,20 @@ class Level:
                 if sprite.name=='pearl':
                     sprite.kill()             
     
+    def check_constraint(self):
+        #gauche droite
+        if self.player.hitbox_rect.left <= 0:
+            self.player.hitbox_rect.left = 0
+        if self.player.hitbox_rect.right >= self.level_width:
+            self.player.hitbox_rect.right = self.level_width
+        #haut bas
+        if self.player.hitbox_rect.top <= 0:
+            self.player.hitbox_rect.top = 0
+        if self.player.hitbox_rect.bottom > self.level_bottom:
+            print("player is dead")
+            
+        #if self.player.hitbox_rect.colliderect(self.level_finish.rect):
+         #   print('level finish')
     def run(self,dt):
         self.display_surface.fill('black')
         
@@ -96,3 +130,4 @@ class Level:
         self.pearl_collision()
         self.hit_collision()
         self.all_sprites.MyDraw(self.player.hitbox_rect.center)   
+        self.check_constraint()

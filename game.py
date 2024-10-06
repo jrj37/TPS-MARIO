@@ -8,26 +8,35 @@ class Game:
     def __init__(self):
         pygame.init()
         self.display_surface=pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
-        pygame.display.set_caption('SUPER TPS WORLD')
+        pygame.display.set_caption('SUPER PREGA BROS')
         self.clock =pygame.time.Clock()
+        self.import_assets()
         
         self.tmx_maps={0: load_pygame(join('.','data','levels','omni.tmx'))}
-        print(self.tmx_maps)
-        
-        self.current_stage=Level(self.tmx_maps[0])
-        
+        self.current_stage=Level(self.tmx_maps[0], self.level_frames)
+
     def import_assets(self):
         self.level_frames = {
             'flag': import_folder('.', 'graphics', 'level', 'flag'),
             'saw': import_folder('.', 'graphics', 'enemies', 'saw', 'animation'),
             'floor_spike' : import_folder('.', 'graphics', 'enemies', 'floor_spikes'),
+            'tooth' : import_folder('.','graphics','enemies','tooth','run'),
+            'shell':import_sub_folders('.','graphics','enemies','shell'),
+            'pearl':import_image('.','graphics','enemies','bullets','pearl'),
+            'flag': import_folder('.', 'graphics', 'level', 'flag'),
+            'saw': import_folder('.', 'graphics', 'enemies', 'saw', 'animation'),
+            'floor_spike' : import_folder('.', 'graphics', 'enemies', 'floor_spikes'),
             'palms' : import_folder('.', 'graphics', 'level', 'palms'),
-            'candles' : import_folder('.', 'graphics', 'level', 'candle'),
+            'candle' : import_folder('.', 'graphics', 'level', 'candle'),
             'window' : import_folder('.', 'graphics', 'level', 'window'),
-            'big chain' : import_folder('.', 'graphics', 'level', 'big chains'),
-            'small chain' : import_folder('.', 'graphics', 'level', 'small chains'),
-            'player' : import_folder('.', 'graphics', 'player'),
+            'big_chain' : import_folder('.', 'graphics', 'level', 'big chains'),
+            'small_chain' : import_folder('.', 'graphics', 'level', 'small chains'),
+            'player' : import_sub_folders('.', 'graphics', 'player'),
+            'pearl':import_image('.','graphics','enemies','bullets','pearl'),
+            'water_top' : import_folder('.', 'graphics', 'level', 'water', 'top'),
+            'water_body' : import_image('.', 'graphics', 'level', 'water', 'body'),
         }
+        
         
     def run(self):
         while True:
