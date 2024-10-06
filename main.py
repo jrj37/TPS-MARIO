@@ -9,7 +9,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.display_surface=pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
-        pygame.display.set_caption('SUPER TPS WORLD')
+        pygame.display.set_caption('SUPER PREGA BROS')
         self.clock =pygame.time.Clock()
         self.import_assets()
         
