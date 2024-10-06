@@ -27,6 +27,7 @@ class Game:
             'big_chain' : import_folder('.', 'graphics', 'level', 'big chains'),
             'small_chain' : import_folder('.', 'graphics', 'level', 'small chains'),
             'player' : import_sub_folders('.', 'graphics', 'player'),
+            'pearl':import_image('.','graphics','enemies','bullets','pearl'),
         }
         
     def run(self):
