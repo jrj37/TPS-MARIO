@@ -77,22 +77,6 @@ class Player(pygame.sprite.Sprite):
         
         if keys[pygame.K_SPACE]:
             self.jump = True 
-
-    def kill(self):
-        if self.rect.top > 2 * WINDOW_HEIGHT:
-            self.rect.topleft = self.origin_pos
-            self.hitbox_rect = self.rect.inflate(-76, -36)
-            self.direction = vector(0,0)
-            self.state = 'idle'
-            self.attacking = False
-
-    def attack(self):
-        if not self.timers['attack block'].active: 
-            self.attacking = True
-            self.frame_index = 0
-            self.timers['attack block'].activate()
-
-                self.jump = True 
                 
     def move(self,dt):
         #horizontal
